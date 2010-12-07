@@ -1,0 +1,18 @@
+{
+   "background_page": "background.html",
+   "description": "Easy way to put online images on imgur. Open an image click on the extension button and get the imgur link directly in clipboard.",
+   "icons": {
+      "128": "icon128.png",
+      "48": "icon48.png"
+   },
+   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCquVaqd8M8kJLFXpwuD6eK5Zcvh26s9Lz57Cf2eU7Yuf+0KGJmwapTQYKHYfW40ho/Ac3glAcvLYiBMb03VMNmTxdo8cwqwos/9ahcwiwDYx9ZuMZfbq+bK+J3u71mBEBosvHm1sXEWIC9Ah8kRdJR+wTi8OStaWCb9gsfnv/DBQIDAQAB",
+   "name": "Imgur the world",
+   "page_action": {
+      "default_icon": "icon.png",
+      "default_title": "Upload this on imgur",
+      "name": "Chose image"
+   },
+   "permissions": [ "tabs", "http://*/*" ],
+   "update_url": "http://clients2.google.com/service/update2/crx",
+   "version": "1.0"
+}
