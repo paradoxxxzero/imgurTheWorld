@@ -1,76 +1,115 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<script>
-		  /*
-		  imgur the world : Chrome extension : Easy way to put online images on imgur. 
-		  Open an image click on the extension button and get the imgur link directly in clipboard.
+  <head>
+    <script>
+/*
+ imgur the world : Chrome extension : Easy way to put online images on imgur.
+ Open an image click on the extension button and get the imgur link directly in clipboard.
 
-		  Copyright (C) 2010 Mounier Florian aka paradoxxxzero
+ Copyright (C) 2010 Mounier Florian aka paradoxxxzero
 
-		  This program is free software: you can redistribute it and/or modify
-		  it under the terms of the GNU Affero General Public License as
-		  published by the Free Software Foundation, either version 3 of the
-		  License, or any later version.
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as
+ published by the Free Software Foundation, either version 3 of the
+ License, or any later version.
 
-		  This program is distributed in the hope that it will be useful,
-		  but WITHOUT ANY WARRANTY; without even the implied warranty of
-		  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-		  GNU Affero General Public License for more details.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
 
-		  You should have received a copy of the GNU Affero General Public License
-		  along with this program.  If not, see http://www.gnu.org/licenses/.
-		  */
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see http://www.gnu.org/licenses/.
+ */
 
-		  
-			// Supported images :
-			var imageExtensionRegEx = new RegExp("\.(png|jpg|jpeg|gif|apng|tiff|bmp|pdf|xcf)$", "i");
-			
-			// Looking for a better way...
-			// This is from http://groups.google.com/group/chromium-extensions/browse_thread/thread/049027e7f3b04f68
-			Clipboard = {}; 
-			Clipboard.utilities = {}; 
-			Clipboard.utilities.createTextArea = function(value) { 
-				var txt = document.createElement('textarea'); 
-				txt.style.position = "absolute"; 
-				txt.style.left = "-100%"; 
-				if (value != null) 
-					txt.value = value; 
-				document.body.appendChild(txt); 
-				return txt; 
-			}; 
-			Clipboard.copy = function(data) { 
-				if (data == null) return; 
-				var txt = Clipboard.utilities.createTextArea(data); 
-				txt.select(); 
-				document.execCommand('Copy'); 
-				document.body.removeChild(txt); 
-			}; 
 
-			chrome.tabs.onUpdated.addListener(function copyToClipboard(id, changeInfo, updatedTab) {
-				if(updatedTab.url.match(imageExtensionRegEx)) {
-					chrome.pageAction.show(id);
-				} else {
-					chrome.pageAction.hide(id);
-				}
-			});
-			
-			// Called when the user clicks on the browser action.
-			chrome.pageAction.onClicked.addListener(function(tab) {
-				chrome.tabs.create({url: "http://imgur.com/api/upload/?url=" + tab.url}, 
-					function(newTab) {  
-						var oneTimeOnly = 0;
-						chrome.tabs.onUpdated.addListener(function copyToClipboard(id, changeInfo, sameTab) {
-							if(id == newTab.id && sameTab.url != "" && oneTimeOnly == 0) {
-								Clipboard.copy(sameTab.url);
-								oneTimeOnly = 1;
-							} else if (oneTimeOnly != 0) {
-								chrome.tabs.onUpdated.removeListener(copyToClipboard);
-							}
-						});
-					} 
-				);	
-			});
-		</script>
-	</head>
+/**
+ * Supported images :
+ */
+var imageExtensionRegEx = new RegExp("\.(png|jpg|jpeg|gif|apng|tiff|bmp|pdf|xcf)$", "i");
+
+/**
+ * Upload to imgur the specified image (url)
+ */
+var toImgur = function(url) {
+    chrome.tabs.create(
+	{url: "http://imgur.com/api/upload/?url=" + url},
+	function(newTab) {
+	    var already = false;
+	    chrome.tabs.onUpdated.addListener(
+		function copyToClipboard(id, changeInfo, sameTab) {
+		    if(id == newTab.id && sameTab.url != "" && !already) {
+			Clipboard.copy(sameTab.url);
+			already = true;
+		    } else if (already) {
+			chrome.tabs.onUpdated.removeListener(copyToClipboard);
+		    }
+		}
+	    );
+	}
+    );
+};
+
+/**
+ * Displays action icon if needed
+ */
+chrome.tabs.onUpdated.addListener(
+    function copyToClipboard(id, changeInfo, updatedTab) {
+	if(updatedTab.url.match(imageExtensionRegEx)) {
+	    chrome.pageAction.show(id);
+	} else {
+	    chrome.pageAction.hide(id);
+	}
+    }
+);
+
+/**
+ * Called when the user clicks on the browser action.
+ */
+chrome.pageAction.onClicked.addListener(
+    function (tab) {
+	toImgur(tab.url);
+    }
+);
+
+/**
+ * Create a context menu which will only show up for images.
+ */
+chrome.contextMenus.create(
+    {
+	"title" : "Upload to imgur",
+	"type" : "normal",
+	"contexts" : ["image"],
+	"onclick" : function(info, tab) {
+	    toImgur(info.srcUrl);
+	}
+    }
+);
+
+/**
+ * Clipboard utiliy
+ * Looking for a better way...
+ * This is from http://groups.google.com/group/chromium-extensions/browse_thread/thread/049027e7f3b04f68
+ */
+Clipboard = {};
+Clipboard.utilities = {};
+Clipboard.utilities.createTextArea = function(value) {
+    var txt = document.createElement('textarea');
+    txt.style.position = "absolute";
+    txt.style.left = "-100%";
+    if (value != null)
+	txt.value = value;
+    document.body.appendChild(txt);
+    return txt;
+};
+Clipboard.copy = function(data) {
+    if (data == null) return;
+    var txt = Clipboard.utilities.createTextArea(data);
+    txt.select();
+    document.execCommand('Copy');
+    document.body.removeChild(txt);
+};
+
+    </script>
+  </head>
 </html>
