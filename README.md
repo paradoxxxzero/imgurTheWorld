@@ -26,4 +26,6 @@ Permissions required are :
 All browsing history corresponds to the "tabs" permission that is required to open a tab and inject script in it (clipboard handling script)
 
 
-[![Flattr this](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=paradoxxx_zero&url=https://github.com/paradoxxxzero/imgurTheWorld&title=imgurTheWorld&tags=github&category=software)
+
+[![Flattr](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=paradoxxx_zero&url=https://github.com/paradoxxxzero/imgurTheWorld&title=imgurTheWorld&tags=github&category=software)
+[![gittip](http://i.imgur.com/IKcQB2P.png)](https://www.gittip.com/paradoxxxzero/)
